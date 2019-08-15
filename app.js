@@ -4,11 +4,19 @@ require('dotenv').config();
 const express = require('express');
 const line = require('@line/bot-sdk');
 const admin = require('firebase-admin');
+const functions = require('firebase-functions');
+
+admin.initializeApp(functions.config().firebase);
+
+let db = admin.firestore();
+const db = firebase.firestore();
+const axios = require('axios');
 
 const config = {
     channelSecret: process.env.channelSecret,
-    channelAccessToken: process.env.channelAccessToken
+    channelAccessToken: process.env.channelAccessToken,
 };
+
 const PORT = process.env.PORT || 3000;
 
 
@@ -16,15 +24,6 @@ const app = express();
 
 app.get('/', (req, res) => res.send('Hello LINE BOT!(GET)')); //ブラウザ確認用(無くても問題ない)
 app.post('/', line.middleware(config), (req, res) => {
-    console.log(req.body.events);
-
-    //ここのif分はdeveloper consoleの"接続確認"用なので削除して問題ないです。
-    if(req.body.events[0].replyToken === '00000000000000000000000000000000' && req.body.events[1].replyToken === 'ffffffffffffffffffffffffffffffff'){
-        res.send('Hello LINE BOT!(POST)');
-        console.log('疎通確認用');
-        return; 
-    }
-
     Promise
       .all(req.body.events.map(handleEvent))
       .then((result) => res.json(result));
@@ -32,11 +31,27 @@ app.post('/', line.middleware(config), (req, res) => {
 
 const client = new line.Client(config);
 
-function handleEvent(event) {
+async function handleEvent(event) {
   if (event.type === 'follow') {
+
+    // get user profile
+    const user_id = event.source.userId;
+    const profile = await axios.get(`https://api.line.me/v2/bot/profile/${user_id}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.channelAccessToken}`,
+      }
+    });
+
+    // save profile to DB
+
+
+    // send auth url
+    console.dir(profile.data);
+    const url = `?user_id=${profile.data.userId}`;
+
     return client.replyMessage(event.replyToken, {
       type: 'text',
-      text: 'when follow we send you url'
+      text: `You can authorize via: ${url}`
     });
   }
 

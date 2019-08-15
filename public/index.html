@@ -12,6 +12,10 @@
     <script defer src="/__/firebase/6.3.5/firebase-database.js"></script>
     <script defer src="/__/firebase/6.3.5/firebase-messaging.js"></script>
     <script defer src="/__/firebase/6.3.5/firebase-storage.js"></script>
+
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+    
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="/__/firebase/init.js"></script>
 
@@ -36,10 +40,28 @@
       <h1>Firebase Hosting Setup Complete</h1>
       <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
       <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+      <button onclick="microsoftLogin">Login via Microsoft</button>
     </div>
     <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
+      function microsoftLogin() {
+        console.log('on microsoft login');
+          var provider = new firebase.auth.OAuthProvider('microsoft.com');
+          firebase.auth().signInWithPopup(provider)
+          .then(function(result) {
+            // User is signed in.
+            // IdP data available in result.additionalUserInfo.profile.
+            // OAuth access token can also be retrieved:
+            // result.credential.accessToken
+          console.log(result);
+          })
+          .catch(function(error) {
+            // Handle error.
+            console.log(error);
+          });
+        }
+
       document.addEventListener('DOMContentLoaded', function() {
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         // // The Firebase SDK is initialized and available here!
@@ -51,14 +73,14 @@
         //
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-        try {
-          let app = firebase.app();
-          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-        }
+        // try {
+        //   let app = firebase.app();
+        //   let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
+        //   document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+        // } catch (e) {
+        //   console.error(e);
+        //   document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+        // }
       });
     </script>
   </body>
