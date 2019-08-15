@@ -1,14 +1,16 @@
 'use strict';
 
+require('dotenv').config();
 const express = require('express');
 const line = require('@line/bot-sdk');
-const PORT = process.env.PORT || 3000;
-require('dotenv').config();
+const admin = require('firebase-admin');
 
 const config = {
     channelSecret: process.env.channelSecret,
     channelAccessToken: process.env.channelAccessToken
 };
+const PORT = process.env.PORT || 3000;
+
 
 const app = express();
 
